@@ -46,34 +46,34 @@ extern void listpfree(LIST **li_list) {
 
 // Doesn't work!!!
 extern void listResize(LIST *li_list, const int iResize) {
-    LIST *li_listNew = NULL;
-    int iNewSize = 0;
-    int iSize = 0;
+  LIST *li_listNew = NULL;
+  int iNewSize = 0;
+  int iSize = 0;
 
-    iNewSize = li_list->iSize + iResize;
+  iNewSize = li_list->iSize + iResize;
 
-    li_listNew = listNew(iNewSize, li_list->iIncrement, li_list->iLength);
+  li_listNew = listNew(iNewSize, li_list->iIncrement, li_list->iLength);
 
-    if(iNewSize > li_list->iSize) {
-        iSize = li_list->iSize;
-    } else {
-        iSize = iNewSize;
-    }
+  if(iNewSize > li_list->iSize) {
+    iSize = li_list->iSize;
+  } else {
+    iSize = iNewSize;
+  }
 
-    memmove(li_listNew->p_data, li_list->p_data, iSize * li_list->iSize);
+  memmove(li_listNew->p_data, li_list->p_data, iSize * li_list->iSize);
 
-    listpfree(&li_list);
+  listpfree(&li_list);
 
-    // Because of this
-    li_list = li_listNew;
+  // Because of this
+  li_list = li_listNew;
 }
 
 
 extern void* listGet(LIST *li_list, const int iIndex) {
-    if(li_list && iIndex >= 0 && (iIndex < li_list->iCount || li_list->iCount == 0)) {
-      return li_list->p_data + (iIndex * li_list->iLength);
-    }
-    return NULL;
+  if(li_list && iIndex >= 0 && (iIndex < li_list->iCount || li_list->iCount == 0)) {
+    return li_list->p_data + (iIndex * li_list->iLength);
+  }
+  return NULL;
 }
 
 extern void* listGetFromBack(LIST *li_list, const int iIndex) {
