@@ -8,20 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// ================
-// STANDART DEFINES
-// ================
-#define TRUE 1
-#define FALSE 0
-//#define NULL (void* 0)
-#define MAXVAL(a, b) (a > b ? a : b)
-#define MINVAL(a, b) (a < b ? a : b)
-#define ARRAYSIZE(array) ((int)(sizeof(array) / sizeof(array[0])))
-
-// Defines for Funktions
-#define DPFREE(val) pfree((void**)&(val));
-#define ZERO(val) memset(val, 0, sizeof(val));
+#include "marcos.h"
 
 
 extern void* cleanloc(const unsigned int iSize);
