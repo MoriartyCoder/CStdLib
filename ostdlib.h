@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "marcos.h"
+#include "marcro.h"
 
 
 extern void* cleanloc(const unsigned int iSize);
