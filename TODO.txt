@@ -1,6 +1,7 @@
-Offset-Macro
-XOR-Macro -> others?
-TRUE/FALSE?
-Copy ? https://github.com/ramdeoshubham/macros/blob/master/macros.h
+Single input value
+Cache
+Config reader/writer
 
+
+Encryption?
 
