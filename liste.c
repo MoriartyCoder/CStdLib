@@ -8,7 +8,7 @@ extern LIST* listNew(const int iSize, const int iIncrement, const int iLength) {
     li_list = calloc(1, sizeof(LIST));
 
     li_list->iCount = 0;        // Anzahl der Elemente in der Liste
-    li_list->iSize = iSize;     // Anzahl der Elemente
+    li_list->iSize = iSize;     // Anzahl der maximal möglichen Elemente in der Liste
     li_list->iIncrement = iIncrement; // Wenn die Liste voll ist, waechst sie um diese Anzahl
     li_list->iLength = iLength; // Groesse eines Elementes
 
@@ -19,19 +19,19 @@ extern LIST* listNew(const int iSize, const int iIncrement, const int iLength) {
   return NULL;
 }
 
-extern int listIncrement(const LIST *li_list) {
+extern int getlistIncrement(const LIST *li_list) {
   return li_list != NULL ? (int)li_list->iIncrement : 0;
 }
 
-extern int listLength(const LIST *li_list) {
+extern int getListLength(const LIST *li_list) {
   return li_list != NULL ? (int)li_list->iLength : 0;
 }
 
-extern int listSize(const LIST *li_list) {
+extern int getListSize(const LIST *li_list) {
   return li_list != NULL ? (int)li_list->iSize : 0;
 }
 
-extern int listCount(const LIST *li_list) {
+extern int getListCount(const LIST *li_list) {
   return li_list != NULL ? (int)li_list->iCount : 0;
 }
 
@@ -44,48 +44,46 @@ extern void listpfree(LIST **li_list) {
 }
 
 
-// Doesn't work!!!
 extern void listResize(LIST *li_list, const int iResize) {
-  LIST *li_listNew = NULL;
-  int iNewSize = 0;
-  int iSize = 0;
+  void *p_oldData    = NULL;
+  void *p_newData    = NULL;
+  int  iNewSize      = 0;
+  int  iTransferSize = 0;
 
-  iNewSize = li_list->iSize + iResize;
-
-  li_listNew = listNew(iNewSize, li_list->iIncrement, li_list->iLength);
+  p_oldData = li_list->p_data;
+  iNewSize  = li_list->iSize + iResize;
+  p_newData = calloc(li_list->iLength, iNewSize);
 
   if(iNewSize > li_list->iSize) {
-    iSize = li_list->iSize;
+    iTransferSize = li_list->iSize;
   } else {
-    iSize = iNewSize;
+    iTransferSize = iNewSize;
   }
 
-  memcpy(li_listNew->p_data, li_list->p_data, iSize * li_list->iSize);
-
-  listpfree(&li_list);
-
-  // Because of this
-  li_list = li_listNew;
+  memcpy(p_newData, p_oldData, iTransferSize * li_list->iLength);
+  li_list->iSize  = iNewSize; 
+  li_list->p_data = p_newData;
+  free(p_oldData);
 }
 
 
 extern void* listGet(LIST *li_list, const int iIndex) {
   if(li_list && iIndex >= 0 && (iIndex < li_list->iCount || li_list->iCount == 0)) {
-    return li_list->p_data + (iIndex * li_list->iLength);
+    return (char*)li_list->p_data + (iIndex * li_list->iLength);
   }
   return NULL;
 }
 
 extern void* listGetFromBack(LIST *li_list, const int iIndex) {
   if(li_list && iIndex >= 0 && (iIndex < li_list->iCount || li_list->iCount == 0)) {
-    return li_list->p_data + (li_list->iCount - iIndex - 1 * li_list->iLength);
+    return (char*)li_list->p_data + (li_list->iCount - iIndex - 1 * li_list->iLength);
   }
   return NULL;
 }
 
 extern void* listGetLast(const LIST *li_list) {
   if(li_list && li_list->iCount > 0) {
-    return li_list->p_data + (li_list->iCount - 1) * li_list->iLength;
+    return (char*)li_list->p_data + (li_list->iCount - 1) * li_list->iLength;
   }
   return NULL;
 }
@@ -98,16 +96,43 @@ extern void* listGetFirst(const LIST *li_list) {
 }
 
 extern void* listAdd(LIST *li_list, void *p_data) {
+  void *p_tmp = NULL;
+
   if(li_list == NULL || p_data == NULL) {
     return NULL;
   }
 
-  printf("L: %d  C: %d\n", li_list->iLength, li_list->iCount);
-  if(li_list->iLength - li_list->iCount == 0) {
-    printf("Pre resize! %p\n", li_list); 
-    listResize(li_list, li_list->iLength + li_list->iIncrement);
-    printf("After resize! %p\n", li_list); 
+  printf("S: %d  C: %d\n", li_list->iSize, li_list->iCount);
+  if(li_list->iSize - li_list->iCount == 0) {
+    printf("Pre resize! %p\n", li_list->p_data); 
+    listResize(li_list, li_list->iSize + li_list->iIncrement);
+    printf("After resize! %p\n", li_list->p_data); 
   }
 
-  return memcpy(li_list->p_data + ((li_list->iCount++) * li_list->iLength), p_data, li_list->iLength);
+  p_tmp = (char*)li_list->p_data + (li_list->iCount * li_list->iLength);
+  memcpy(p_tmp, p_data, li_list->iLength);
+  li_list->iCount++;
+
+  return p_tmp;
+}
+
+extern void* listDelete(LIST *li_list, const int iIndex) {
+  void *p_tmp = NULL;
+
+  if(li_list == NULL || p_data == NULL) {
+    return NULL;
+  }
+
+  printf("S: %d  C: %d\n", li_list->iSize, li_list->iCount);
+  if(li_list->iSize - li_list->iCount == 0) {
+    printf("Pre resize! %p\n", li_list->p_data); 
+    listResize(li_list, li_list->iSize + li_list->iIncrement);
+    printf("After resize! %p\n", li_list->p_data); 
+  }
+
+  p_tmp = (char*)li_list->p_data + (li_list->iCount * li_list->iLength);
+  memcpy(p_tmp, p_data, li_list->iLength);
+  li_list->iCount++;
+
+  return p_tmp;
 }

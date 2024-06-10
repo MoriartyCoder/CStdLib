@@ -4,10 +4,10 @@
 #include "ostdlib.h"
 
 typedef struct LIST {
-    int iCount;     // iCount is the amount of elements that are in the list.
-    int iSize;      // iSize is the count of how often iLength has been allocated.
-    int iIncrement; // iIncrement is how much is added when more space is needed.
-    int iLength;    // iLength is the length of the element.
+    unsigned int iLength;     // iCount is the amount of elements that are in the list.
+    unsigned int iCapacity;      // iSize is the count of how often iLength has been allocated.
+    unsigned int iIncrement; // iIncrement is how much is added when more space is needed.
+    unsigned int iDataSize;    // iLength is the length of the element.
     void *p_data;
 } LIST;
 
