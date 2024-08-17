@@ -7,13 +7,13 @@ typedef struct LIST {
   unsigned int iLength;      // Amount of elements that are in the list
   unsigned int iCapacity;    // Maximal elements that the current allocated memory space can hold
   unsigned int iIncrement;   // How much is added when more space is needed
-  unsigned int iDataSize;    // Size of a element
+  unsigned int iElementSize; // Size of a element
   void *p_data;
 } LIST;
 
 
 
-extern LIST *listNew(const int iDataSize, const int iCapacity, const int iIncrement);
+extern LIST *listNew(const int iElementSize, const int iCapacity, const int iIncrement);
 extern unsigned int getLength(const LIST *li_list);
 extern unsigned int getIncrement(const LIST *li_list);
 extern unsigned int getCapacity(const LIST *li_list);
